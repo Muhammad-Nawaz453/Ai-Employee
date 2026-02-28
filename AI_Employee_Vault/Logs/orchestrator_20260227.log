@@ -1,0 +1,14 @@
+2026-02-27 03:11:36,154 - Orchestrator - INFO - Orchestrator initialized
+2026-02-27 03:11:36,154 - Orchestrator - INFO - Vault path: D:\Ai-Employee\AI_Employee_Vault
+2026-02-27 03:11:36,156 - Orchestrator - ERROR - Error updating dashboard: 'charmap' codec can't decode byte 0x8f in position 555: character maps to <undefined>
+2026-02-27 03:11:36,157 - Orchestrator - INFO - Triggering Claude Code: 2 pending, 0 approved
+2026-02-27 03:11:36,164 - Orchestrator - INFO - Auto mode: Would process 2 items
+2026-02-27 03:11:36,165 - Orchestrator - INFO -   - FILE_test_file.md
+2026-02-27 03:11:36,165 - Orchestrator - INFO -   - FILE_test_file.meta.md
+2026-02-27 03:11:49,802 - Orchestrator - INFO - Orchestrator initialized
+2026-02-27 03:11:49,803 - Orchestrator - INFO - Vault path: D:\Ai-Employee\AI_Employee_Vault
+2026-02-27 03:11:49,808 - Orchestrator - INFO - Dashboard updated: 2 pending, 0 done today
+2026-02-27 03:11:49,809 - Orchestrator - INFO - Triggering Claude Code: 2 pending, 0 approved
+2026-02-27 03:11:49,820 - Orchestrator - INFO - Auto mode: Would process 2 items
+2026-02-27 03:11:49,820 - Orchestrator - INFO -   - FILE_test_file.md
+2026-02-27 03:11:49,820 - Orchestrator - INFO -   - FILE_test_file.meta.md

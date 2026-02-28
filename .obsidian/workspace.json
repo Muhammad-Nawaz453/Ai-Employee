@@ -1,0 +1,197 @@
+{
+  "main": {
+    "id": "4c51656aa9bf0481",
+    "type": "split",
+    "children": [
+      {
+        "id": "a870a74b490e2ffc",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "9ca7e9021fa16711",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "AI_Employee_Vault/Dashboard.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Dashboard"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "617218ed971e7edd",
+    "type": "split",
+    "children": [
+      {
+        "id": "21a6121045728d6b",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "a1b742c921a19941",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "8f750dbd71b7ebcf",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "10daee6152fd6f37",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "6818d2fc1f1e536c",
+    "type": "split",
+    "children": [
+      {
+        "id": "43200d43b41a27dc",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "82494a606146ff9f",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "AI_Employee_Vault/Needs_Action/FILE_test_file.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks for FILE_test_file"
+            }
+          },
+          {
+            "id": "f47dad667f20b00b",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "AI_Employee_Vault/Needs_Action/FILE_test_file.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links from FILE_test_file"
+            }
+          },
+          {
+            "id": "f3296e7ea7bebca6",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "ecb50a9b95315da7",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "All properties"
+            }
+          },
+          {
+            "id": "5323ef7e1091b4f9",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "AI_Employee_Vault/Needs_Action/FILE_test_file.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline of FILE_test_file"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false,
+      "bases:Create new base": false
+    }
+  },
+  "active": "a1b742c921a19941",
+  "lastOpenFiles": [
+    "AI_Employee_Vault/Done/FILE_test_file.meta.md",
+    "AI_Employee_Vault/Done/FILE_test_file.md",
+    "AI_Employee_Vault/Needs_Action/FILE_test_file.md",
+    "AI_Employee_Vault/Logs/2026-02-28.jsonl",
+    "AI_Employee_Vault/Logs/orchestrator_20260228.log",
+    "AI_Employee_Vault/Invoices/test_file.md",
+    "test_file.md",
+    "AI_Employee_Vault/Dashboard.md"
+  ]
+}

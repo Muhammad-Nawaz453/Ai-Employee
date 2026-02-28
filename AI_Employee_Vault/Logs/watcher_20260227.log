@@ -1,0 +1,12 @@
+2026-02-27 03:10:58,616 - FileSystemWatcher - INFO - FileSystemWatcher initialized
+2026-02-27 03:10:58,617 - FileSystemWatcher - INFO - Vault path: D:\Ai-Employee\AI_Employee_Vault
+2026-02-27 03:10:58,617 - FileSystemWatcher - INFO - Check interval: 2s
+2026-02-27 03:10:58,617 - FileSystemWatcher - INFO - Watch folder: D:\Ai-Employee\drop_folder
+2026-02-27 03:10:58,617 - FileSystemWatcher - INFO - Starting FileSystemWatcher
+2026-02-27 03:10:58,617 - FileSystemWatcher - INFO - Watching: D:\Ai-Employee\drop_folder
+2026-02-27 03:10:58,617 - FileSystemWatcher - INFO - Press Ctrl+C to stop
+2026-02-27 03:11:11,317 - FileSystemWatcher - INFO - New file detected: D:\Ai-Employee\drop_folder\test_file.md
+2026-02-27 03:11:11,321 - FileSystemWatcher - INFO - Created metadata file: FILE_test_file.meta.md
+2026-02-27 03:11:11,321 - FileSystemWatcher - INFO - Processed file: test_file.md
+2026-02-27 03:11:12,630 - FileSystemWatcher - INFO - Created metadata file: FILE_test_file.meta.md
+2026-02-27 03:11:12,630 - FileSystemWatcher - INFO - Created action file: test_file.md

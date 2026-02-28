@@ -1,0 +1,26 @@
+2026-02-28 14:20:42,685 - Orchestrator - INFO - Orchestrator initialized
+2026-02-28 14:20:42,690 - Orchestrator - INFO - Vault path: D:\Ai-Employee\AI_Employee_Vault
+2026-02-28 14:20:42,691 - Orchestrator - INFO - Triggering Claude Code: 2 pending, 0 approved
+2026-02-28 14:20:42,711 - Orchestrator - ERROR - Claude Code not found. Run: npm install -g @anthropic/claude-code
+2026-02-28 14:30:46,131 - Orchestrator - INFO - Orchestrator initialized
+2026-02-28 14:30:46,131 - Orchestrator - INFO - Vault path: D:\Ai-Employee\AI_Employee_Vault
+2026-02-28 14:30:46,132 - Orchestrator - INFO - Triggering Qwen Code: 2 pending, 0 approved
+2026-02-28 14:30:46,147 - Orchestrator - ERROR - Qwen Code not found. Install Qwen Code CLI.
+2026-02-28 14:37:35,415 - Orchestrator - INFO - Orchestrator initialized
+2026-02-28 14:37:35,416 - Orchestrator - INFO - Vault path: D:\Ai-Employee\AI_Employee_Vault
+2026-02-28 14:37:35,417 - Orchestrator - INFO - Triggering Qwen Code: 2 pending, 0 approved
+2026-02-28 14:37:35,435 - Orchestrator - ERROR - Qwen Code not found. Install Qwen Code CLI.
+2026-02-28 14:37:41,733 - Orchestrator - INFO - Orchestrator initialized
+2026-02-28 14:37:41,733 - Orchestrator - INFO - Vault path: D:\Ai-Employee\AI_Employee_Vault
+2026-02-28 14:37:41,734 - Orchestrator - INFO - Triggering Qwen Code: 2 pending, 0 approved
+2026-02-28 14:37:41,747 - Orchestrator - ERROR - Qwen Code not found. Install Qwen Code CLI.
+2026-02-28 14:38:39,159 - Orchestrator - INFO - Orchestrator initialized
+2026-02-28 14:38:39,159 - Orchestrator - INFO - Vault path: D:\Ai-Employee\AI_Employee_Vault
+2026-02-28 14:38:39,160 - Orchestrator - INFO - Triggering Qwen Code: 2 pending, 0 approved
+2026-02-28 14:38:39,206 - Orchestrator - ERROR - Error running Qwen: 'charmap' codec can't encode character '\U0001f4cb' in position 165: character maps to <undefined>
+2026-02-28 14:39:22,982 - Orchestrator - INFO - Orchestrator initialized
+2026-02-28 14:39:22,982 - Orchestrator - INFO - Vault path: D:\Ai-Employee\AI_Employee_Vault
+2026-02-28 14:39:22,983 - Orchestrator - INFO - Triggering Qwen Code: 2 pending, 0 approved
+2026-02-28 14:40:36,173 - Orchestrator - INFO - Orchestrator initialized
+2026-02-28 14:40:36,174 - Orchestrator - INFO - Vault path: D:\Ai-Employee\AI_Employee_Vault
+2026-02-28 14:40:36,175 - Orchestrator - INFO - Triggering Qwen Code: 2 pending, 0 approved
