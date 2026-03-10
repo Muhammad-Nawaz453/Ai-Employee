@@ -3,20 +3,167 @@ Orchestrator
 
 Main coordination script for the AI Employee system.
 Triggers Qwen Code to process items in Needs_Action folder.
+Includes Ralph Wiggum Loop for autonomous task completion.
 
 Usage:
     python orchestrator.py --vault-path /path/to/vault
     python orchestrator.py --vault-path /path/to/vault --process-all
+    python orchestrator.py --vault-path /path/to/vault --ralph-loop "Process all pending items"
 """
 
 import argparse
 import subprocess
 import sys
 import os
+import time
+import json
 from pathlib import Path
-from datetime import datetime
-from typing import List, Optional
+from datetime import datetime, timedelta
+from typing import List, Optional, Dict, Any
 import logging
+
+# Import Silver tier modules
+from watchers.hitl_approval import ApprovalManager
+from watchers.plan_manager import PlanManager
+
+
+class RalphWiggumLoop:
+    """
+    Ralph Wiggum Loop - Keeps Claude Code working until tasks are complete.
+    
+    This implements the Stop hook pattern where:
+    1. Orchestrator creates state file with prompt
+    2. Claude works on task
+    3. Claude tries to exit
+    4. Stop hook checks: Is task file in /Done?
+    5. If NO → Block exit, re-inject prompt (loop continues)
+    6. Repeat until complete or max iterations
+    
+    Reference: https://github.com/anthropics/claude-code/tree/main/.claude/plugins/ralph-wiggum
+    """
+
+    def __init__(self, vault_path: str, max_iterations: int = 10):
+        """
+        Initialize the Ralph Wiggum Loop.
+
+        Args:
+            vault_path: Path to the Obsidian vault root
+            max_iterations: Maximum loop iterations before forcing exit
+        """
+        self.vault_path = Path(vault_path)
+        self.max_iterations = max_iterations
+        self.current_iteration = 0
+        
+        # Folders
+        self.needs_action = self.vault_path / 'Needs_Action'
+        self.done = self.vault_path / 'Done'
+        self.plans = self.vault_path / 'Plans'
+        self.state_file = self.vault_path / 'Logs' / 'ralph_state.json'
+        
+        # Ensure directories exist
+        (self.vault_path / 'Logs').mkdir(parents=True, exist_ok=True)
+        
+        # Setup logging
+        self.logger = logging.getLogger('RalphWiggumLoop')
+        
+        # Load state
+        self._load_state()
+
+    def _load_state(self) -> None:
+        """Load loop state from file."""
+        if self.state_file.exists():
+            try:
+                state = json.loads(self.state_file.read_text())
+                self.current_iteration = state.get('iteration', 0)
+                self.task_prompt = state.get('prompt', '')
+                self.start_time = state.get('start_time')
+            except:
+                self.current_iteration = 0
+                self.task_prompt = ''
+                self.start_time = None
+
+    def _save_state(self) -> None:
+        """Save loop state to file."""
+        state = {
+            'iteration': self.current_iteration,
+            'prompt': self.task_prompt,
+            'start_time': self.start_time,
+            'last_check': datetime.now().isoformat()
+        }
+        self.state_file.write_text(json.dumps(state, indent=2))
+
+    def start(self, prompt: str) -> bool:
+        """
+        Start a new Ralph loop.
+
+        Args:
+            prompt: Task prompt for Claude
+
+        Returns:
+            True if started successfully
+        """
+        self.current_iteration = 0
+        self.task_prompt = prompt
+        self.start_time = datetime.now().isoformat()
+        self._save_state()
+        
+        self.logger.info(f'Ralph loop started: "{prompt[:50]}..."')
+        return True
+
+    def should_continue(self) -> bool:
+        """
+        Check if the loop should continue.
+
+        Returns:
+            True if Claude should keep working
+        """
+        # Check max iterations
+        if self.current_iteration >= self.max_iterations:
+            self.logger.warning(f'Max iterations ({self.max_iterations}) reached')
+            return False
+        
+        # Check if there are still pending items
+        pending_count = len([f for f in self.needs_action.iterdir() 
+                            if f.is_file() and f.suffix == '.md'])
+        
+        if pending_count > 0:
+            self.logger.info(f'Continuing: {pending_count} items still pending')
+            return True
+        
+        # Check for active plans
+        plans_folder = self.vault_path / 'Plans'
+        if plans_folder.exists():
+            active_plans = len([f for f in plans_folder.iterdir() 
+                               if f.is_file() and f.suffix == '.md'
+                               and 'status: active' in f.read_text()])
+            if active_plans > 0:
+                self.logger.info(f'Continuing: {active_plans} active plans')
+                return True
+        
+        # All done
+        self.logger.info('All tasks complete - loop ending')
+        return False
+
+    def increment(self) -> int:
+        """Increment iteration counter and return new value."""
+        self.current_iteration += 1
+        self._save_state()
+        return self.current_iteration
+
+    def get_status(self) -> Dict[str, Any]:
+        """Get current loop status."""
+        return {
+            'iteration': self.current_iteration,
+            'max_iterations': self.max_iterations,
+            'prompt': self.task_prompt,
+            'start_time': self.start_time,
+            'should_continue': self.should_continue()
+        }
+
+    def end(self) -> None:
+        """End the loop and clean up state."""
+        self.state_file.unlink(missing_ok=True)
+        self.logger.info('Ralph loop ended')
 
 
 class Orchestrator:
@@ -26,19 +173,20 @@ class Orchestrator:
     - Monitors Needs_Action folder for items to process
     - Triggers Qwen Code to analyze and act on items
     - Updates Dashboard.md with status
+    - Manages HITL approvals and Plans (Silver Tier)
     """
-    
+
     def __init__(self, vault_path: str, check_interval: int = 60):
         """
         Initialize the orchestrator.
-        
+
         Args:
             vault_path: Path to the Obsidian vault root
             check_interval: Seconds between checks (default: 60)
         """
         self.vault_path = Path(vault_path)
         self.check_interval = check_interval
-        
+
         # Folders
         self.needs_action = self.vault_path / 'Needs_Action'
         self.done = self.vault_path / 'Done'
@@ -47,16 +195,21 @@ class Orchestrator:
         self.approved = self.vault_path / 'Approved'
         self.logs = self.vault_path / 'Logs'
         self.dashboard = self.vault_path / 'Dashboard.md'
-        
+
         # Ensure directories exist
-        for folder in [self.needs_action, self.done, self.plans, 
+        for folder in [self.needs_action, self.done, self.plans,
                        self.pending_approval, self.approved, self.logs]:
             folder.mkdir(parents=True, exist_ok=True)
-        
+
+        # Initialize Silver tier managers
+        self.approval_manager = ApprovalManager(vault_path)
+        self.plan_manager = PlanManager(vault_path)
+        self.ralph_loop = RalphWiggumLoop(vault_path)
+
         # Setup logging
         self._setup_logging()
-        
-        self.logger.info(f'Orchestrator initialized')
+
+        self.logger.info(f'Orchestrator initialized (Silver Tier)')
         self.logger.info(f'Vault path: {self.vault_path}')
     
     def _setup_logging(self) -> None:
@@ -344,15 +497,97 @@ Start by reading the Company Handbook and Business Goals, then process the pendi
                 'actor': 'orchestrator',
                 **details
             }
-            
+
             log_file = self.logs / f'{datetime.now().strftime("%Y-%m-%d")}.jsonl'
-            
+
             with open(log_file, 'a') as f:
                 import json
                 f.write(json.dumps(log_entry) + '\n')
-                
+
         except Exception as e:
             self.logger.error(f'Error logging action: {e}')
+
+    def ralph_loop_run(self, prompt: str = None) -> None:
+        """
+        Run the Ralph Wiggum Loop for autonomous task completion.
+        
+        This keeps Claude Code working until all tasks are complete or
+        max iterations is reached.
+        
+        Args:
+            prompt: Optional custom prompt (uses default if not provided)
+        """
+        self.logger.info('Starting Ralph Wiggum Loop')
+        self.logger.info('This will keep Claude working until tasks are complete')
+        
+        # Default prompt if not provided
+        if not prompt:
+            prompt = """# Autonomous Task Processing
+
+Process all pending items in the vault:
+
+1. Read all files in /Needs_Action/
+2. Create plans in /Plans/ for multi-step tasks
+3. Create approval requests in /Pending_Approval/ for sensitive actions
+4. Execute approved actions from /Approved/
+5. Move completed items to /Done/
+6. Update the Dashboard
+
+Follow the Company Handbook rules. Log all actions.
+"""
+        
+        # Start the Ralph loop
+        self.ralph_loop.start(prompt)
+        
+        try:
+            while self.ralph_loop.should_continue():
+                iteration = self.ralph_loop.increment()
+                self.logger.info(f'=== Ralph Loop Iteration {iteration}/{self.ralph_loop.max_iterations} ===')
+                
+                # Update dashboard
+                self.update_dashboard()
+                
+                # Build and display prompt
+                pending = self.get_pending_items()
+                approved = self.get_approved_items()
+                active_plans = self.plan_manager.get_active_plans()
+                
+                print("\n" + "="*60)
+                print(f"🔄 Ralph Loop - Iteration {iteration}/{self.ralph_loop.max_iterations}")
+                print("="*60)
+                print(f"📋 Pending items: {len(pending)}")
+                print(f"✅ Approved actions: {len(approved)}")
+                print(f"📝 Active plans: {len(active_plans)}")
+                print("="*60)
+                
+                # Launch Claude Code
+                try:
+                    # Change to vault directory and launch qwen
+                    result = subprocess.run(
+                        f'cd /d "{self.vault_path}" && qwen --prompt "{prompt.replace(chr(10), " ").replace(chr(34), chr(39))}"',
+                        text=True,
+                        capture_output=False,
+                        shell=True,
+                        encoding='utf-8',
+                        env={**os.environ, 'PYTHONUTF8': '1'}
+                    )
+                    
+                    if result.returncode != 0:
+                        self.logger.warning(f'Qwen exited with code {result.returncode}')
+                    
+                except Exception as e:
+                    self.logger.error(f'Error running Qwen: {e}')
+                
+                # Small delay before next iteration
+                time.sleep(2)
+                
+        except KeyboardInterrupt:
+            self.logger.info('Ralph loop stopped by user')
+        
+        # Cleanup
+        self.ralph_loop.end()
+        self.update_dashboard()
+        self.logger.info('Ralph loop finished')
     
     def run(self) -> None:
         """
@@ -385,7 +620,7 @@ Start by reading the Company Handbook and Business Goals, then process the pendi
 def main():
     """Main entry point for the orchestrator."""
     parser = argparse.ArgumentParser(
-        description='Orchestrate AI Employee workflow'
+        description='Orchestrate AI Employee workflow (Silver Tier)'
     )
     parser.add_argument(
         '--vault-path',
@@ -408,6 +643,18 @@ def main():
         action='store_true',
         help='Run in interactive mode (launch Qwen Code)'
     )
+    parser.add_argument(
+        '--ralph-loop',
+        nargs='?',
+        const=True,
+        metavar='PROMPT',
+        help='Run Ralph Wiggum Loop for autonomous completion (optional custom prompt)'
+    )
+    parser.add_argument(
+        '--status',
+        action='store_true',
+        help='Show current status and exit'
+    )
 
     args = parser.parse_args()
 
@@ -416,7 +663,24 @@ def main():
         check_interval=args.interval
     )
 
-    if args.interactive:
+    if args.status:
+        # Show status
+        print("\n" + "="*60)
+        print("AI Employee Status (Silver Tier)")
+        print("="*60)
+        print(f"Vault: {args.vault_path}")
+        print(f"Pending items: {len(orchestrator.get_pending_items())}")
+        print(f"Approved items: {len(orchestrator.get_approved_items())}")
+        print(f"Active plans: {len(orchestrator.plan_manager.get_active_plans())}")
+        print(f"Pending approvals: {len(orchestrator.approval_manager.get_pending_requests())}")
+        print("="*60 + "\n")
+        return
+
+    if args.ralph_loop:
+        # Ralph Wiggum Loop mode
+        prompt = args.ralph_loop if args.ralph_loop is not True else None
+        orchestrator.ralph_loop_run(prompt=prompt)
+    elif args.interactive:
         # Interactive mode - launch Qwen immediately
         orchestrator.trigger_qwen(mode='interactive')
     elif args.process_once:

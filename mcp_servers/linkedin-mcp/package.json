@@ -1,0 +1,22 @@
+{
+  "name": "linkedin-mcp",
+  "version": "1.0.0",
+  "description": "MCP Server for LinkedIn automation - posting business updates to generate sales",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "node test.js"
+  },
+  "keywords": [
+    "mcp",
+    "linkedin",
+    "automation",
+    "social-media"
+  ],
+  "author": "AI Employee Project",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^0.5.0",
+    "playwright": "^1.40.0"
+  }
+}

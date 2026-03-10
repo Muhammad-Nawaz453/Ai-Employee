@@ -1,0 +1,11 @@
+2026-03-10 07:30:32,984 - FileSystemWatcher - INFO - FileSystemWatcher initialized
+2026-03-10 07:30:32,985 - FileSystemWatcher - INFO - Vault path: VAULT
+2026-03-10 07:30:32,985 - FileSystemWatcher - INFO - Check interval: 5s
+2026-03-10 07:30:32,986 - FileSystemWatcher - INFO - Watch folder: DROP
+2026-03-10 07:30:32,986 - FileSystemWatcher - INFO - Starting FileSystemWatcher
+2026-03-10 07:30:32,987 - FileSystemWatcher - INFO - Watching: DROP
+2026-03-10 07:30:32,987 - FileSystemWatcher - INFO - Press Ctrl+C to stop
+2026-03-10 07:30:59,840 - GmailWatcher - INFO - GmailWatcher initialized
+2026-03-10 07:30:59,840 - GmailWatcher - INFO - Vault path: VAULT
+2026-03-10 07:30:59,840 - GmailWatcher - INFO - Check interval: 120s
+2026-03-10 07:30:59,841 - GmailWatcher - INFO - VIP senders: []
