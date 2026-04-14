@@ -1,0 +1,19 @@
+{
+  "name": "facebook-instagram-mcp",
+  "version": "1.0.0",
+  "description": "MCP Server for Facebook and Instagram integration with HITL workflow",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": ["mcp", "facebook", "instagram", "automation"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^0.5.0",
+    "playwright": "^1.40.0",
+    "axios": "^1.6.0",
+    "fs-extra": "^11.2.0"
+  }
+}
